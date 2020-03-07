@@ -54,7 +54,7 @@ public class GitlabUrlUtility {
 	private static final String PUBLIC_GITLAB_HOST_NAME = "gitlab.com";
   private static final int FIRST_RUN_HISTORY_DEFAULT = 14;
 
-  private static String projectIdValue; 
+  private static String projectIdValue;
 
 	@Autowired
 	public GitlabUrlUtility(GitlabSettings gitlabSettings) {
@@ -79,11 +79,11 @@ public class GitlabUrlUtility {
 		String date = getCreatedAfterDate(repo, firstRun);
 
 		UriComponentsBuilder builder = UriComponentsBuilder.newInstance();
-		
+
 		if(StringUtils.isNotBlank(gitlabSettings.getPort())) {
 		    builder.port(gitlabSettings.getPort());
 		}
-		
+
 		URI uri = builder.scheme(protocol)
 				.host(host)
 				.path(gitlabSettings.getPath())
@@ -238,10 +238,10 @@ public class GitlabUrlUtility {
         return uri;
     }
 
-    public URI buildMergeRequestChangesApiUrl(String webUrl, String mergeRequestIid) {
+    public URI buildMergeRequestChangesApiUrl(String repoUrl, String mergeRequestIid) {
         String apiVersion = getApiVersion();
         String protocol = getProtocol();
-        String repoName = getRepoName(webUrl);
+        String repoName = getRepoName(repoUrl);
         String host = getRepoHost();
 
         UriComponentsBuilder builder = UriComponentsBuilder.newInstance();
@@ -410,12 +410,10 @@ public class GitlabUrlUtility {
 			LOG.error(e.getMessage(), e);
 		}
 		repoName = StringUtils.removeStart(repoName, "/");
-        String[] urlParts = repoName.split("/");
-        repoName = urlParts[0];
         if (gitlabSettings.isUseProjectId()) {
             repoName = projectIdValue;
         } else {
-            repoName = urlParts[0] + "%2F" + urlParts[1];
+            repoName = repoName.replace("/","%2F");
         }
 		return repoName;
 	}
